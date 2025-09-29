@@ -1,4 +1,4 @@
 Core/Src/softWareTimer.o: ../Core/Src/softWareTimer.c \
- ../Core/Src/softWareTimer.h
+ ../Core/Inc/softWareTimer.h
 
-../Core/Src/softWareTimer.h:
+../Core/Inc/softWareTimer.h:
