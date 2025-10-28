@@ -1,0 +1,4 @@
+softWareTimer.c:7:6:timer_ISR	8	static
+softWareTimer.c:10:6:setTimer	16	static
+softWareTimer.c:16:5:isTimerExpire	16	static
+softWareTimer.c:23:6:timerRun	16	static
