@@ -1,0 +1,2 @@
+light_traffic.c:9:6:setTrafficLight	16	static
+light_traffic.c:103:6:turnOffTrafficLight	8	static

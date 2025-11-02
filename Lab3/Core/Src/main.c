@@ -22,8 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "softWareTimer.h"
-#include "button.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,34 +44,7 @@ TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
 TIM_HandleTypeDef htim2;
-const uint8_t seg_table[10] = {
-    0b1000000, // 0
-    0b1111001, // 1
-    0b0100100, // 2
-    0b0110000, // 3
-    0b0011001, // 4
-    0b0010010, // 5
-    0b0000010, // 6
-    0b1111000, // 7
-    0b0000000, // 8
-    0b0010000  // 9
-};
 
-int 	index_led 		= 0;
-int 	led_buffer[MAX_LED]   = {1, 2, 3, 4};
-
-int 	T_RED 		= 10;
-int 	T_YELLOW 	= 3;
-int 	T_GREEN 	= 7;
-
-int     T_RED_modify 	= 0;
-int     T_YELLOW_modify = 0;
-int     T_GREEN_modify 	= 0;
-
-int 	counterA = 7;   // road A (bắt đầu xanh)
-int 	counterB = 10;   // road B (bắt đầu đỏ)
-int     FSM      = 1;   // 1 = MODE1, 2 = MODE2, 3 = MODE3, 4 = MODE4
-int 	status = 0;     // 0=GREEN_RED, 1=YELLOW_RED, 2=RED_GREEN, 3=RED_YELLOW
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -123,122 +95,17 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  setTimer(0, 5);
-  setTimer(1, 3);
-  setTimer(2, 7);
-  setTimer(3, 11);
+  setTimer(0, 3);
+  setTimer(1, 5);
   setTimer(4, 13);
   setTimer(5, 17);
   setTimer(6, 19);
   setTimer(7, 2);
   while (1)
   {
-
-	  switch (FSM) {
-	  	  case 1: // MODE1
-	  	      if (isTimerExpire(0)) {
-	  	    	  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-	  	    	  update7SEG(index_led++);
-	  	    	  if (index_led >= MAX_LED) index_led = 0;
-	  	          setTimer(0, 250); // reset timer 0.25s
-	  	      }
-	  		  if (isTimerExpire(1)) {
-	  			  update7SEGBuffer(counterA, counterB);
-	  			  updateTrafficLight();
-	  			  setTrafficLight(status);
-	  			  setTimer(1, 1000);
-	  		  }
-	  		  if (isButtonPressed(0) == 1) { //press button1
-	  			  FSM = 2; // MODE1 -> MODE2
-		  		  turnOffTrafficLight();
-	  		  }
-	  		  break;
-
-	  	  case 2: // MODE2
-	  		  if (isTimerExpire(2)) {
-		  		  updateModeBuffer(FSM);
-		  		  update7SEG(index_led++);
-		  		  if (index_led >= MAX_LED) index_led = 0;
-		  		  setTimer(2, 250);
-	  		  }
-
-	  		  if (isButtonPressed(0) == 1) { //press button1
-	  			  FSM = 3; // MODE2 -> MODE3
-		  		  turnOffTrafficLight();
-	  		  }
-	  		  if (isButtonPressed(1) == 1) { //press button2, modify time
-	  			  ++T_RED_modify;
-	  			  if (T_RED_modify >= 100) T_RED_modify = 0;
-	  		  }
-	  		  if (isButtonPressed(2) == 1) { //press button3
-	  			  FSM = 1; // MODE2 -> MODE1
-	  			  if (T_RED_modify < 20) { // minimum red light duration is 20 seconds
-	  				  break;
-	  			  }
-	  			  T_RED = T_RED_modify;
-	  			  T_GREEN = T_RED - T_YELLOW;
-	  			  counterA = T_GREEN;
-	  			  counterB = T_RED;
-	  			  status = 0;
-	  		  }
-	  		  break;
-
-	  	  case 3: // MODE3
-	  		  if (isTimerExpire(2)) {
-		  		  updateModeBuffer(FSM);
-		  		  update7SEG(index_led++);
-		  		  if (index_led >= MAX_LED) index_led = 0;
-		  		  setTimer(2, 250);
-	  		  }
-	  		  if (isButtonPressed(0) == 1) { //press button1
-	  			  FSM = 4; // MODE3 -> MODE4
-		  		  turnOffTrafficLight();
-	  		  }
-	  		  if (isButtonPressed(1) == 1) { //press button2 modify time
-	  			  ++T_YELLOW_modify;
-	  			  if (T_YELLOW_modify >= 100) T_YELLOW_modify = 0;
-	  		  }
-	  		  if (isButtonPressed(2) == 1) { //press button3
-	  			  FSM = 1; // MODE3 -> MODE1
-	  			  if (T_YELLOW_modify > 5 || T_YELLOW_modify == 0) { // 0s < yellow light duration <= 5 seconds
-	  				  break;
-	  			  }
-	  			  T_YELLOW = T_YELLOW_modify;
-	  			  T_RED = T_GREEN + T_YELLOW;
-	  			  counterA = T_GREEN;
-	  			  counterB = T_RED;
-	  			  status = 0;
-	  		  }
-	  		  break;
-
-	  	  case 4: // MODE4
-	  		  if (isTimerExpire(2)) {
-		  		  updateModeBuffer(FSM);
-		  		  update7SEG(index_led++);
-		  		  if (index_led >= MAX_LED) index_led = 0;
-		  		  setTimer(2, 250);
-	  		  }
-	  		  if (isButtonPressed(0) == 1) { //press button1
-	  			  FSM = 1; // MODE4 -> MODE1
-	  		  }
-	  		  if (isButtonPressed(1) == 1) { //press button2, modify time
-	  			  ++T_GREEN_modify;
-	  			  if (T_GREEN_modify >= 100) T_GREEN_modify = 0;
-	  		  }
-	  		  if (isButtonPressed(2) == 1) { //press button3
-	  			  FSM = 1; // MODE4 -> MODE1
-	  			  if (T_GREEN_modify < 15 || T_GREEN_modify > 49) { // minimum green light duration is 15 seconds
-	  				  break;
-	  			  }
-	  			  T_GREEN = T_GREEN_modify;
-	  			  T_RED = T_GREEN + T_YELLOW;
-	  			  counterA = T_GREEN;
-	  			  counterB = T_RED;
-	  			  status = 0;
-	  		  }
-	  		  break;
-	  }
-
+	  fsm_automatic_run();
+	  fsm_manual_run();
+	  fsm_config_run();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -438,114 +305,7 @@ void update7SEGBuffer(int counterA, int counterB) {
     led_buffer[2] = counterB / 10;
     led_buffer[3] = counterB % 10;
 }
-void updateModeBuffer(int FSM) {
-	switch (FSM) {
-		case 2:
-		  	HAL_GPIO_TogglePin(LED_RED1_GPIO_Port, LED_RED1_Pin);
-		  	HAL_GPIO_TogglePin(LED_RED2_GPIO_Port, LED_RED2_Pin);
 
-			led_buffer[0] = T_RED_modify / 10;
-			led_buffer[1] = T_RED_modify % 10;
-			led_buffer[2] = 0;
-			led_buffer[3] = 2;
-			break;
-		case 3:
-		  	HAL_GPIO_TogglePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin);
-		  	HAL_GPIO_TogglePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin);
-
-			led_buffer[0] = T_YELLOW_modify / 10;
-			led_buffer[1] = T_YELLOW_modify % 10;
-			led_buffer[2] = 0;
-			led_buffer[3] = 3;
-			break;
-		case 4:
-		  	HAL_GPIO_TogglePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin);
-		  	HAL_GPIO_TogglePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin);
-
-			led_buffer[0] = T_GREEN_modify / 10;
-			led_buffer[1] = T_GREEN_modify % 10;
-			led_buffer[2] = 0;
-			led_buffer[3] = 4;
-			break;
-		default:
-			break;
-	}
-}
-void updateTrafficLight() {
-    counterA--;
-    counterB--;
-    if (counterA <= 0 || counterB <= 0) {
-        switch (status) {
-            case 0: // GREEN_RED
-                status = 1;
-                counterA = T_YELLOW;
-                //counterB = T_RED;
-                break;
-            case 1: // YELLOW_RED
-                status = 2;
-                counterA = T_RED;
-                counterB = T_GREEN;
-                break;
-            case 2: // RED_GREEN
-                status = 3;
-                counterB = T_YELLOW;
-                break;
-            case 3: // RED_YELLOW
-                status = 0;
-                counterA = T_GREEN;
-                counterB = T_RED;
-                break;
-        }
-    }
-}
-void setTrafficLight(int status) {
-    switch (status) {
-        case 0: // GREEN_RED
-            HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_SET);
-
-            HAL_GPIO_WritePin(LED_RED2_GPIO_Port, LED_RED2_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin, GPIO_PIN_RESET);
-            break;
-        case 1: // YELLOW_RED
-            HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_RESET);
-
-            HAL_GPIO_WritePin(LED_RED2_GPIO_Port, LED_RED2_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin, GPIO_PIN_RESET);
-            break;
-        case 2: // RED_GREEN
-            HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_RESET);
-
-            HAL_GPIO_WritePin(LED_RED2_GPIO_Port, LED_RED2_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin, GPIO_PIN_SET);
-            break;
-        case 3: // RED_YELLOW
-            HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_RESET);
-
-            HAL_GPIO_WritePin(LED_RED2_GPIO_Port, LED_RED2_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin, GPIO_PIN_RESET);
-            break;
-    }
-}
-void turnOffTrafficLight() {
-    HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_RED2_GPIO_Port, LED_RED2_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin, GPIO_PIN_RESET);
-}
 
 /* USER CODE END 4 */
 

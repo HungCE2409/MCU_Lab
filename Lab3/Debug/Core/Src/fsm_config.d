@@ -1,4 +1,5 @@
-Core/Src/button.o: ../Core/Src/button.c ../Core/Inc/button.h \
+Core/Src/fsm_config.o: ../Core/Src/fsm_config.c ../Core/Inc/fsm_config.h \
+ ../Core/Inc/global.h ../Core/Inc/softwareTimer.h ../Core/Inc/button.h \
  ../Core/Inc/main.h ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Inc/stm32f1xx_hal_conf.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -23,10 +24,15 @@ Core/Src/button.o: ../Core/Src/button.c ../Core/Inc/button.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- ../Core/Inc/softWareTimer.h ../Core/Inc/button.h ../Core/Inc/global.h \
- ../Core/Inc/softwareTimer.h ../Core/Inc/light_traffic.h \
- ../Core/Inc/fsm_automatic.h ../Core/Inc/fsm_manual.h \
+ ../Core/Inc/softWareTimer.h ../Core/Inc/fsm_automatic.h \
+ ../Core/Inc/light_traffic.h ../Core/Inc/fsm_manual.h \
  ../Core/Inc/fsm_config.h
+
+../Core/Inc/fsm_config.h:
+
+../Core/Inc/global.h:
+
+../Core/Inc/softwareTimer.h:
 
 ../Core/Inc/button.h:
 
@@ -82,15 +88,9 @@ Core/Src/button.o: ../Core/Src/button.c ../Core/Inc/button.h \
 
 ../Core/Inc/softWareTimer.h:
 
-../Core/Inc/button.h:
-
-../Core/Inc/global.h:
-
-../Core/Inc/softwareTimer.h:
+../Core/Inc/fsm_automatic.h:
 
 ../Core/Inc/light_traffic.h:
-
-../Core/Inc/fsm_automatic.h:
 
 ../Core/Inc/fsm_manual.h:
 
