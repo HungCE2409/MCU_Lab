@@ -97,7 +97,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   setTimer(0, 3);
   setTimer(1, 5);
-  setTimer(4, 13);
+  setTimer(2, 2000);
   setTimer(5, 17);
   setTimer(6, 19);
   setTimer(7, 2);
@@ -264,7 +264,12 @@ void display7SEG(int num) {
     HAL_GPIO_WritePin(SEG5_GPIO_Port, SEG5_Pin, (pattern >> 5) & 0x01);
     HAL_GPIO_WritePin(SEG6_GPIO_Port, SEG6_Pin, (pattern >> 6) & 0x01);
 }
-
+void turnOFF7SEG() {
+	HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_RESET); 	 // turn off LED1
+	HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);   // turn off LED2
+	HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, GPIO_PIN_RESET);   // turn off LED2
+	HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, GPIO_PIN_RESET);   // turn off LED3
+}
 void update7SEG(int index) {
 	switch (index) {
 		case 0:

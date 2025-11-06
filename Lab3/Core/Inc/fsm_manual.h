@@ -14,6 +14,8 @@
 #include "light_traffic.h"
 #include "main.h"
 
+#define DELAY_YELLOW 2000
+
 void fsm_manual_run();
 
 

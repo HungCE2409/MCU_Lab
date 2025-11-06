@@ -34,3 +34,5 @@ int     T_GREEN_modify 	= 0;
 int 	counterA = 0;   // road A (bắt đầu xanh)
 int 	counterB = 0;   // road B (bắt đầu đỏ)
 int 	status   = INIT_SYS;
+
+int entered = 0;

@@ -10,16 +10,10 @@
 void fsm_manual_run() {
 	switch (status) {
 		case MAN_RED_GREEN:
-			led_buffer[0] = manual_led_buffer[0];
-			led_buffer[1] = manual_led_buffer[1];
-			led_buffer[2] = manual_led_buffer[2];
-			led_buffer[3] = manual_led_buffer[3];
 			if (isTimerExpire(0)) {
 				HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-				update7SEG(index_led++);
-				if (index_led >= MAX_LED) index_led = 0;
-				setTimer(0, 250); // reset timer 0.25s
 			}
+			turnOFF7SEG();
 			setTrafficLight(status);
 			if (isButtonPressed(1) == 1) {
 				status = MAN_RED_YELLOW;
@@ -30,36 +24,37 @@ void fsm_manual_run() {
 			}
 			break;
 		case MAN_RED_YELLOW:
-			led_buffer[0] = manual_led_buffer[0];
-			led_buffer[1] = manual_led_buffer[1];
-			led_buffer[2] = manual_led_buffer[2];
-			led_buffer[3] = manual_led_buffer[3];
 			if (isTimerExpire(0)) {
 				HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-				update7SEG(index_led++);
-				if (index_led >= MAX_LED) index_led = 0;
-				setTimer(0, 250); // reset timer 0.25s
 			}
+			turnOFF7SEG();
 			setTrafficLight(status);
+
+			if (!entered) {
+				setTimer(2, DELAY_YELLOW);   // timer1 đếm 2 giây
+				entered = 1;
+			}
+
+			// Sau 2s thì chuyển qua MAN_GREEN_RED
+			if (isTimerExpire(2)) {
+				status = MAN_GREEN_RED;
+				entered = 0;
+			}
 			if (isButtonPressed(1) == 1) {
 				status = MAN_GREEN_RED;
+				entered = 0;
 			}
 			if (isButtonPressed(0) == 1) { //press button1
+				entered = 0;
 				turnOffTrafficLight();
 				status = CONFIG_RED; // MODE2 -> MODE3
 			}
 			break;
 		case MAN_GREEN_RED:
-			led_buffer[0] = manual_led_buffer[0];
-			led_buffer[1] = manual_led_buffer[1];
-			led_buffer[2] = manual_led_buffer[2];
-			led_buffer[3] = manual_led_buffer[3];
 			if (isTimerExpire(0)) {
 				HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-				update7SEG(index_led++);
-				if (index_led >= MAX_LED) index_led = 0;
-				setTimer(0, 250); // reset timer 0.25s
 			}
+			turnOFF7SEG();
 			setTrafficLight(status);
 			if (isButtonPressed(1) == 1) {
 				status = MAN_YELLOW_RED;
@@ -70,21 +65,28 @@ void fsm_manual_run() {
 			}
 			break;
 		case MAN_YELLOW_RED:
-			led_buffer[0] = manual_led_buffer[0];
-			led_buffer[1] = manual_led_buffer[1];
-			led_buffer[2] = manual_led_buffer[2];
-			led_buffer[3] = manual_led_buffer[3];
 			if (isTimerExpire(0)) {
 				HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-				update7SEG(index_led++);
-				if (index_led >= MAX_LED) index_led = 0;
-				setTimer(0, 250); // reset timer 0.25s
 			}
+			turnOFF7SEG();
 			setTrafficLight(status);
+
+			if (!entered) {
+				setTimer(2, DELAY_YELLOW);   // timer1 đếm 2 giây
+				entered = 1;
+			}
+
+			// Sau 2s thì chuyển qua MAN_GREEN_RED
+			if (isTimerExpire(2)) {
+				status = MAN_RED_GREEN;
+				entered = 0;
+			}
 			if (isButtonPressed(1) == 1) {
+				entered = 0;
 				status = MAN_RED_GREEN;
 			}
 			if (isButtonPressed(0) == 1) { //press button1
+				entered = 0;
 				turnOffTrafficLight();
 				status = CONFIG_RED; // MODE2 -> MODE3
 			}

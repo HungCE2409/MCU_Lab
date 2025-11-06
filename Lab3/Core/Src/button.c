@@ -11,13 +11,17 @@ int button_flag[NUM_OF_BUTTONS] = {0, 0, 0};
 uint32_t button_time[NUM_OF_BUTTONS] = {0}; //
 int combo_flag = 0; //
 int combo_pair[2] = {-1, -1}; //
+int pending_button = -1;
+uint32_t pending_time = 0;
 
 GPIO_TypeDef* BUTTON_PORT[NUM_OF_BUTTONS] = {BUTTON1_GPIO_Port, BUTTON2_GPIO_Port, BUTTON3_GPIO_Port};
 uint16_t BUTTON_PIN[NUM_OF_BUTTONS] = {BUTTON1_Pin, BUTTON2_Pin, BUTTON3_Pin};
 
 //------------------------
 int isButtonPressed(int index){
-	if(button_flag[index]){
+	uint32_t now = HAL_GetTick();
+
+	if (button_flag[index]) {
 		button_flag[index] = 0;
 		return 1;
 	}
@@ -37,17 +41,6 @@ void getKeyInput(){
 				if (KeyReg3[i] == PRESSED_STATE){
 					TimeOutForKeyPress[i] = DURATION_FOR_AUTO_INCREASING;
 					button_flag[i] = 1;
-
-	                uint32_t now = HAL_GetTick();
-	                button_time[i] = now;
-	                //check another button
-	                for (int j = 0; j < NUM_OF_BUTTONS; j++) {
-	                    if (j != i && (now - button_time[j]) <= COMBO_THRESHOLD) {
-	                        combo_flag = 1;
-	                        combo_pair[0] = j;
-	                        combo_pair[1] = i;
-	                    }
-	                }
 				}
 			} else {
 				TimeOutForKeyPress[i]--;
@@ -67,4 +60,9 @@ int isComboPressed() {
         return 1;
     }
     return 0;
+}
+void clearButtonFlags() {
+    for (int i = 0; i < NUM_OF_BUTTONS; i++) {
+        button_flag[i] = 0;
+    }
 }

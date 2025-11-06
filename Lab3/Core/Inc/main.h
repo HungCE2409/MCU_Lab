@@ -71,7 +71,7 @@ void update7SEGBuffer(int counterA, int counterB);
 void updateCounterLight();// LED 7 SEG
 void updateModeBuffer(int FSM);
 void LedException();
-
+void turnOFF7SEG();
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

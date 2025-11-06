@@ -44,4 +44,5 @@ extern int 	counterA;    // road A (bắt đầu xanh)
 extern int 	counterB;   // road B (bắt đầu đỏ)
 extern int 	status;
 
+extern int entered;
 #endif /* INC_GLOBAL_H_ */
