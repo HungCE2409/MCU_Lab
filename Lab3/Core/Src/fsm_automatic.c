@@ -15,6 +15,7 @@ void fsm_automatic_run() {
 			setTimer(1, 1000);
 			counterB = T_RED;
 			counterA = T_GREEN;
+			index_led = 0;
 			// T_RED_modify = T_RED;
 			// T_GREEN_modify = T_GREEN;
 			// T_YELLOW_modify = T_YELLOW;

@@ -16,12 +16,13 @@
 #define NUM_OF_BUTTONS 3
 #define DURATION_FOR_AUTO_INCREASING 100
 #define DURATION_FOR_AUTO_INCREASING 100
-#define COMBO_THRESHOLD 1000 // 1000ms
+#define COMBO_THRESHOLD 500 // 500ms
 
 extern int button1_flag;
 extern int combo_flag; //
 extern int combo_pair[2];
 int isButtonPressed();
+void clearButtonFlags();
 void getKeyInput();
 int isButton1LongPressed();
 int isComboPressed();
