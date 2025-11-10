@@ -1,4 +1,0 @@
-button.c:21:5:isButtonPressed	24	static
-button.c:32:6:getKeyInput	16	static
-button.c:57:5:isComboPressed	4	static
-button.c:64:6:clearButtonFlags	16	static
